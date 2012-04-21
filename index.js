@@ -1,5 +1,6 @@
 var airport = require('airport');
 var seaport = require('seaport');
+var dnode = require('dnode');
 var marx = require('marx');
 
 module.exports = function (ports) {
@@ -7,7 +8,7 @@ module.exports = function (ports) {
         && ports.free && ports.assume && ports.allocate
     ;
     
-    if (!isSeaport) ports = seaport(ports);
+    if (!isSeaport) ports = seaport.connect(ports);
     var air = airport(ports);
     
     return {
@@ -28,26 +29,31 @@ module.exports = function (ports) {
                     return acc;
                 }, {});
                 
+                var workers = ps.reduce(function (acc, p) {
+                    acc[p.id] = 10;
+                    return acc;
+                }, {});
+                
                 ps.forEach(function (p) {
-                    var c = dnode.connect(p, function (remote, conn) {
-                        remote.plan(plan, ids);
-                    });
-                    c.on('error', function (err) {
-                        console.error(err);
+                    dnode.connect(p, function (remote, conn) {
+                        remote.plan(workers, plan);
+                        conn.end();
                     });
                 });
+                
+                ports.close();
             });
         },
     };
 };
 
 function drone (ports, plan) {
-    if (!plan) plan = {};
+    if (!plan) prevPlan = {};
     
     var service = function (remote, conn) {
-        this.plan = function (p, workers) {
+        this.plan = function (workers, plan) {
             // todo: query zygote roles at the start and subscribe to update
-            plan = p;
+            prevPlan = plan;
             
             var work = marx(workers, plan)[id] || {};
             console.dir(work);
