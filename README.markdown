@@ -13,7 +13,7 @@ First start a seaport hub:
 seaport 7000
 ```
 
-Start an undifferentiated zygote worker drone:
+Start several undifferentiated zygote worker drones on different machines:
 
 ```
 zygote drone localhost:7000
@@ -43,3 +43,6 @@ Push the cluster plan to all the zygote drones:
 ```
 zygote --seaport=localhost:7000 push cluster.json
 ```
+
+Now there are 2 web, 1 auth, and 3 encoder services running across all your
+zygote drones!
