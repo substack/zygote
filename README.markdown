@@ -24,14 +24,16 @@ Create a cluster plan:
 ``` json
 {
     "web" : {
-        "min" : 2,
+        "number" : 2,
+        "command" : "node web.js"
     },
     "auth" : {
-        "exactly" : 1
+        "number" : 1,
+        "command" : "node web.js"
     },
     "encoder" : {
-        "min" : 5,
-        "max" : 8
+        "number" : 3,
+        "command" : "node web.js"
     }
 }
 ```
@@ -39,5 +41,5 @@ Create a cluster plan:
 Push the cluster plan to all the zygote drones:
 
 ```
-zygote push localhost:7000 cluster.json
+zygote --seaport=localhost:7000 push cluster.json
 ```
