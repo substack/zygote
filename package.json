@@ -1,0 +1,35 @@
+{
+    "name" : "zygote",
+    "description" : "cellular differentiation for seaport clusters",
+    "version" : "0.0.0",
+    "repository" : {
+        "type" : "git",
+        "url" : "git://github.com/substack/zygote.git"
+    },
+    "bin" : {
+        "zygote" : "bin/cmd.js"
+    },
+    "dependencies" : {
+        "seaport" : "~0.6.7",
+        "airport" : "~0.3.4",
+        "dnode" : "~0.9.10",
+        "marx" : "~0.0.1",
+        "optimist" : "~0.3.1"
+    },
+    "devDependencies" : {
+        "tap" : "~0.2.4"
+    },
+    "keywords" : [
+        "travis",
+        "ci"
+    ],
+    "engines" : {
+        "node" : ">=0.4.0"
+    },
+    "license" : "MIT",
+    "author" : {
+        "name" : "James Halliday",
+        "email" : "mail@substack.net",
+        "url" : "http://substack.net"
+    }
+}
