@@ -15,7 +15,7 @@ module.exports = function (ports) {
     return {
         drone : function (opts) {
             if (!opts) opts = {};
-            var service = drone(ports, opts.plan);
+            var service = drone(ports);
             
             var meta = {
                 id : service.id,
@@ -48,8 +48,7 @@ module.exports = function (ports) {
     };
 };
 
-function drone (ports, plan) {
-    if (!plan) prevPlan = {};
+function drone (ports) {
     var procs = {};
     
     var service = function (remote, conn) {
@@ -57,28 +56,38 @@ function drone (ports, plan) {
             // todo: query zygote roles at the start and subscribe to update
             
             var work = Object.keys(plan).reduce(function (acc, name) {
-                acc[name] = plan[name].number;
+                var n = plan[name].number;
+                if (n) acc[name] = n;
                 return acc;
             }, {});
             
             var share = marx(workers, work)[id] || {};
             
-            var names = Object.keys(prevPlan).concat(Object.keys(share));
+            var names = Object.keys(procs).concat(Object.keys(work));
             names.forEach(function (name) {
-                var diff = (share[name] || 0) - (prevPlan[name] || 0);
+                if (!procs[name]) procs[name] = [];
+                
+                var diff = (share[name] || 0) - procs[name].length;
                 var cmd = plan[name].command;
+                
                 if (!Array.isArray(cmd)) cmd = cmd.split(' ');
                 
-                for (var i = diff; i < 0; i++) {
+                for (var i = 0; i < -diff; i++) (function () {
                     // cull excess services
-                    procs[name]
+                    
+                    var to = setTimeout(function () { ps.kill() }, 2000);
+                    var ps = procs[name][procs[name].length - i - 1];
+                    
+                    ps
                         .removeAllListeners('exit')
                         .on('exit', function () {
-                            delete procs[name];
+                            clearTimeout(to);
+                            var ix = procs[name].indexOf(this);
+                            if (ix >= 0) procs[name].splice(ix, 1);
                         })
                     ;
-                    procs[name].kill('SIGHUP');
-                }
+                    ps.kill('SIGHUP');
+                })(i);
                 
                 function createProc (cmd) {
                     var ps = spawn(cmd[0], cmd.slice(1));
@@ -89,17 +98,18 @@ function drone (ports, plan) {
                 
                 for (var i = 0; i < diff; i++) {
                     // spawn extra services
-                    procs[name] = createProc(cmd);
+                    var ps = createProc(cmd);
+                    procs[name].push(ps);
                     
-                    procs[name].on('exit', function () {
+                    ps.on('exit', function () {
+                        var ps = this;
                         setTimeout(function () {
-                            procs[name] = createProc(cmd);
+                            var ix = procs[name].indexOf(ps);
+                            if (ix >= 0) procs[name][ix] = createProc(cmd);
                         }, 1000);
                     });
                 }
             });
-            
-            prevShare = share;
         };
     };
     
