@@ -27,7 +27,7 @@
         "ci"
     ],
     "engines" : {
-        "node" : ">=0.4.0"
+        "node" : ">=0.6.0"
     },
     "license" : "MIT",
     "author" : {
