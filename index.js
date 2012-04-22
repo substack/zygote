@@ -21,7 +21,11 @@ module.exports = function (ports) {
                 id : service.id,
                 capacity : opts.capacity || 100,
             };
-            return air(service).listen('zygote', { meta : meta });
+            var c = air(service).listen('zygote', { meta : meta });
+            c.on('close', function () {
+                service.close();
+            });
+            return c;
         },
         push : function (plan) {
             ports.query('zygote', function (ps) {
@@ -42,7 +46,7 @@ module.exports = function (ports) {
                     });
                 });
                 
-                ports.close();
+                if (!isSeaport) ports.close();
             });
         },
     };
@@ -114,5 +118,13 @@ function drone (ports) {
     };
     
     var id = service.id = Math.random().toString(16).slice(2);
+    service.close = function () {
+        Object.keys(procs).forEach(function (name) {
+            procs[name].forEach(function (ps) {
+                ps.removeAllListeners('exit').kill();
+            });
+        });
+    };
+    
     return service;
 }
