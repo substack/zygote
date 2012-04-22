@@ -29,11 +29,11 @@ Create a cluster plan:
     },
     "auth" : {
         "number" : 1,
-        "command" : "node web.js"
+        "command" : "node auth.js"
     },
     "encoder" : {
         "number" : 3,
-        "command" : "node web.js"
+        "command" : "node encoder.js"
     }
 }
 ```
