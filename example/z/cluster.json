@@ -1,0 +1,14 @@
+{
+    "web" : {
+        "number" : 2,
+        "command" : "node web.js"
+    },
+    "auth" : {
+        "number" : 1,
+        "command" : "node auth.js"
+    },
+    "encoder" : {
+        "number" : 3,
+        "command" : "node encoder.js"
+    }
+}

@@ -46,3 +46,20 @@ zygote --seaport=localhost:7000 push cluster.json
 
 Now there are 2 web, 1 auth, and 3 encoder services running across all your
 zygote drones!
+
+Modify the cluster plan and run `zygote push` again to update what all the
+zygote drones are running.
+
+install
+=======
+
+With [npm](http://npmjs.org) do:
+
+```
+npm install zygote
+```
+
+license
+=======
+
+MIT
