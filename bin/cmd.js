@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var zygote = require('../');
 var fs = require('fs');
 
