@@ -4,6 +4,8 @@ zygote
 [Cellular-differentiation](http://en.wikipedia.org/wiki/Cellular_differentiation)
 for worker drones in [seaport](https://github.com/substack/seaport) clusters.
 
+[![build status](https://secure.travis-ci.org/substack/zygote.png)](http://travis-ci.org/substack/zygote)
+
 example
 =======
 
